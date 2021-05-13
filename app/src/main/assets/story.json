@@ -1,0 +1,119 @@
+{
+  "users" : [
+    {
+      "user_id": "1",
+      "username": "thebride",
+      "profile_picture" : "https://www.birdunyafilm.co/wp-content/uploads/2018/01/killbiage.jpg",
+      "stories" : [
+        {
+          "story_id" : "11",
+          "story_time": "30m",
+          "url": "https://www.filmarasidergisi.com/wp-content/uploads/2020/11/Kill-Bill-Movies.jpg",
+          "content_type" : 0
+        },
+        {
+          "story_id" : "12",
+          "story_time": "4h",
+          "url": "https://i.sozcu.com.tr/wp-content/uploads/2019/12/11/iecrop/killbill_16_9_1576053608.jpg",
+          "content_type" : 0
+        },
+        {
+          "story_id" : "13",
+          "story_time": "8h",
+          "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          "content_type" : 1
+        },
+        {
+          "story_id" : "14",
+          "story_time": "21h",
+          "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYoVrgOTwje9-M1iHWniCJ6H-SdrY-UuhLyw&usqp=CAU",
+          "content_type" : 0
+        }
+      ]
+    },
+    {
+      "user_id": "2",
+      "username": "orenishi",
+      "profile_picture" : "https://static.wikia.nocookie.net/killbill/images/a/a5/O-RenPromo.jpg/revision/latest/top-crop/width/360/height/450?cb=20110228183001",
+      "stories" : [
+        {
+          "story_id" : "21",
+          "story_time": "30m",
+          "url": "https://static.wikia.nocookie.net/vsbattles/images/e/e2/4415925-4011160928-894b1.jpg/revision/latest?cb=20170226083251",
+          "content_type" : 0
+        },
+        {
+          "story_id" : "22",
+          "story_time": "4h",
+          "url": "https://i.ytimg.com/vi/XCJ5VYP8c5o/maxresdefault.jpg",
+          "content_type" : 0
+        },
+        {
+          "story_id" : "23",
+          "story_time": "8h",
+          "url": "https://i.pinimg.com/originals/f2/c7/be/f2c7be7a5bc66ac2a47a5f04648f8810.jpg",
+          "content_type" : 0
+        }
+      ]
+    },
+    {
+      "user_id": "3",
+      "username": "masterpaimei",
+      "profile_picture" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhQbNB2q1qhzUT1IyI52NfD4kdh2dEyb_9lg&usqp=CAU",
+      "stories" : [
+        {
+          "story_id" : "31",
+          "story_time": "30m",
+          "url": "https://i.ytimg.com/vi/fCbf4DjlHuM/maxresdefault.jpg",
+          "content_type" : 0
+        },
+        {
+          "story_id" : "32",
+          "story_time": "4h",
+          "url": "https://kungfukingdom.com/wp-content/uploads/2019/12/Kill-Bill-Volume-2-2004-Kung-Fu-Kingdom-770x472.jpg",
+          "content_type" : 0
+        }
+      ]
+    },
+    {
+      "user_id": "4",
+      "username": "billtheassassin",
+      "profile_picture" : "https://static.wikia.nocookie.net/killbill/images/e/ea/BillPromo.jpg/revision/latest?cb=20110301021325",
+      "stories" : [
+        {
+          "story_id" : "41",
+          "story_time": "30m",
+          "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+          "content_type" : 1
+        }
+      ]
+    },
+    {
+      "user_id": "5",
+      "username": "elledriver",
+      "profile_picture" : "https://i.ytimg.com/vi/QsaG8rJGlyQ/maxresdefault.jpg",
+      "stories" : [
+        {
+          "story_id" : "51",
+          "story_time": "30m",
+          "url": "https://img2.looper.com/img/gallery/the-biggest-unanswered-questions-in-the-kill-bill-saga/what-happened-to-elle-driver-at-the-end-of-kill-bill-1588965347.jpg",
+          "content_type" : 0
+        }
+      ]
+    },
+    {
+      "user_id": "6",
+      "username": "hattorihanzo",
+      "profile_picture" : "https://i.ytimg.com/vi/rIr6rEndy0A/maxresdefault.jpg",
+      "stories" : [
+        {
+          "story_id" : "61",
+          "story_time": "30m",
+          "url": "https://i.ytimg.com/vi/EnjtQQQaDKo/maxresdefault.jpg",
+          "content_type" : 0
+        }
+      ]
+    }
+  ]
+
+}
