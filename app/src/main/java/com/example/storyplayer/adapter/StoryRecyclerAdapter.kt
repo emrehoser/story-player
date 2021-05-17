@@ -19,7 +19,7 @@ class StoryRecyclerAdapter(
 ): RecyclerView.Adapter<StoryRecyclerAdapter.ViewHolder>() {
 
     interface StoryClickListener{
-        fun storyClicked(index: Int)
+        fun onStoryClicked(index: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,22 +31,24 @@ class StoryRecyclerAdapter(
         return users.count()
     }
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = users[position]
         holder.username.text = item.username
         Glide.with(context).load(item.profilePicture).into(holder.profilePhoto)
         holder.bindData(position, itemClick)
+
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val isSeen = itemView.findViewById<ImageView>(R.id.is_seen_circle)
-        val profilePhoto = itemView.findViewById<CircleImageView>(R.id.row_story_profile)
-        val username = itemView.findViewById<TextView>(R.id.username)
+        val isSeen: ImageView = itemView.findViewById<ImageView>(R.id.is_seen_circle)
+        val profilePhoto: CircleImageView = itemView.findViewById<CircleImageView>(R.id.row_story_profile)
+        val username: TextView = itemView.findViewById<TextView>(R.id.username)
 
         fun bindData(position: Int, clickListener: StoryClickListener){
             itemView.setOnClickListener {
-                clickListener.storyClicked(position)
-                isSeen.setImageResource(R.drawable.seen_story_circle)
+                clickListener.onStoryClicked(position)
+                //isSeen.setImageResource(R.drawable.seen_story_circle)
             }
         }
     }

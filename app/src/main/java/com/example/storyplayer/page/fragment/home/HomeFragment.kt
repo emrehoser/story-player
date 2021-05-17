@@ -6,18 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storyplayer.R
-import com.example.storyplayer.ViewModel.StoryViewModel
+import com.example.storyplayer.viewmodel.StoryViewModel
 import com.example.storyplayer.adapter.StoryRecyclerAdapter
 import com.example.storyplayer.listener.FragmentChangeListener
 import com.example.storyplayer.model.StoryResponse
 import com.example.storyplayer.page.fragment.story.StoryContainerFragment
-import com.google.gson.Gson
-import org.json.JSONObject
-import java.io.InputStream
 
 class HomeFragment : Fragment(), StoryRecyclerAdapter.StoryClickListener{
 
@@ -42,7 +38,7 @@ class HomeFragment : Fragment(), StoryRecyclerAdapter.StoryClickListener{
 
         initViews(view)
         setFragmentChangeListener(activity as FragmentChangeListener)
-        viewModel.readStories(requireContext().assets.open("story.json"))
+        viewModel.readStories(requireContext().assets.open("data.json"))
         viewModel.storyRead.observe(viewLifecycleOwner,{
             storiesRead(it)
         } )
@@ -68,7 +64,7 @@ class HomeFragment : Fragment(), StoryRecyclerAdapter.StoryClickListener{
         this.fragmentChangeListener = fragmentChangeListener
     }
 
-    override fun storyClicked(index: Int) {
+    override fun onStoryClicked(index: Int) {
         val bundle = Bundle()
         bundle.putInt("current_user", index)
         bundle.putSerializable("users", storyResponse)

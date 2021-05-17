@@ -17,6 +17,8 @@ class StoryViewPagerAdapter(
 
     interface StoryDetailClickListener{
         fun cancelListener()
+        fun nextUserStory()
+        fun previousUserStory()
     }
 
     override fun getItemCount(): Int {

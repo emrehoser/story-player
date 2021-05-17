@@ -1,4 +1,4 @@
-package com.example.storyplayer.ViewModel
+package com.example.storyplayer.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -15,12 +15,11 @@ class StoryViewModel(application: Application): AndroidViewModel(application) {
 
     fun readStories(inputStream: InputStream) {
         this.inputStream = inputStream
-        val storiesJSON = readStoriesFromJson()
-        val storyResponse = createStoryResponse(storiesJSON)
+        val storyResponse = createStoryResponse(readStoriesFromJson())
         storyRead.postValue(storyResponse)
     }
 
-    fun readStoriesFromJson() : JSONObject {
+    private fun readStoriesFromJson() : JSONObject {
         val size = inputStream.available()
         val buffer = ByteArray(size)
         inputStream.read(buffer)

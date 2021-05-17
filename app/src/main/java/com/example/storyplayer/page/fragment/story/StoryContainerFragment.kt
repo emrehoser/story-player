@@ -4,24 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.storyplayer.R
-import com.example.storyplayer.adapter.StoryAdapter
-import com.example.storyplayer.adapter.StoryRecyclerAdapter
 import com.example.storyplayer.adapter.StoryViewPagerAdapter
 import com.example.storyplayer.listener.FragmentChangeListener
 import com.example.storyplayer.model.StoryResponse
-import com.example.storyplayer.model.User
+
 import kotlin.properties.Delegates
 
 class StoryContainerFragment: Fragment(), StoryViewPagerAdapter.StoryDetailClickListener {
 
-    private lateinit var adapter: StoryAdapter
     private lateinit var adapter2: StoryViewPagerAdapter
     private lateinit var viewpager: ViewPager2
     private lateinit var fragmentChangeListener: FragmentChangeListener
@@ -50,11 +43,11 @@ class StoryContainerFragment: Fragment(), StoryViewPagerAdapter.StoryDetailClick
         currentUser = requireArguments().getInt("current_user")
 
         viewpager = root.findViewById(R.id.view_pager)
+        viewpager.offscreenPageLimit = users.users.size
         viewpager.post {
             viewpager.setCurrentItem(currentUser, true)
         }
-        //adapter = StoryAdapter(users.users, requireContext(), this)
-        //viewpager.adapter = adapter
+
         adapter2 = StoryViewPagerAdapter(users.users,this,this)
         viewpager.adapter = adapter2
         viewpager.setPageTransformer(ViewPager2.PageTransformer(){ view: View, fl: Float ->
@@ -82,5 +75,20 @@ class StoryContainerFragment: Fragment(), StoryViewPagerAdapter.StoryDetailClick
 
     override fun cancelListener() {
         fragmentChangeListener.destroyCurrentFragment()
+    }
+
+    override fun nextUserStory() {
+        if (viewpager.currentItem != users.users.size-1){
+            viewpager.currentItem = viewpager.currentItem+1
+        }
+        else {
+            fragmentChangeListener.destroyCurrentFragment()
+        }
+    }
+
+    override fun previousUserStory() {
+        if (viewpager.currentItem != 0){
+            viewpager.currentItem = viewpager.currentItem-1
+        }
     }
 }
