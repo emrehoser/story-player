@@ -1,6 +1,7 @@
 package com.example.storyplayer.page.fragment.story
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -14,6 +15,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.storyplayer.R
 import com.example.storyplayer.adapter.StoryViewPagerAdapter
 import com.example.storyplayer.listener.CustomTouchListener
@@ -39,9 +44,9 @@ class StoryFragment(
     private lateinit var cancelButton: ImageView
     private lateinit var next: View
     private  lateinit var previous: View
-    private lateinit var timer:CountDownTimer
-    //private lateinit var isSeenList: BooleanArray
 
+
+    private var timer:CountDownTimer? = null
     private var progressBarList = arrayListOf<ProgressBar>()
     private var currentStory = 0
     private var pressTime = 0L
@@ -50,6 +55,8 @@ class StoryFragment(
     private var duration = 0L
     private var remainingTime = 0L
     private var onHold = false
+    private var nextClicked = 0L
+    private var previousClicked = 0L
 
 
 
@@ -64,13 +71,10 @@ class StoryFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews(view)
         initProgressBar()
         setListener()
         setFragmentChangeListener(activity as FragmentChangeListener)
-        loadData()
-
     }
 
     override fun onPause() {
@@ -81,27 +85,55 @@ class StoryFragment(
     override fun onResume() {
         super.onResume()
         loadData()
-        if(user.stories[currentStory].contentType == 0){
-            duration = 5000L
-            setTimer(duration,duration)
-        } else{
-            storyVideo.setVideoURI(Uri.parse(user.stories[currentStory].url))
-            storyVideo.setOnPreparedListener {
-                setTimer(it.duration.toLong(),it.duration.toLong())
-            }
-        }
-
+        setContent()
         storyInfoLayout.visibility = View.VISIBLE
         storyVideo.start()
     }
 
+    private fun setContent(){
+        if(user.stories[currentStory].contentType == 0){
+            Glide.with(requireContext()).load(user.stories[currentStory].url)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
 
-
-    private fun resetData() {
-        if(this::timer.isInitialized){
-            timer.cancel()
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        duration = 5000L
+                        if(onHold){
+                            setTimer(duration,remainingTime)
+                        }else{
+                            setTimer(duration,duration)
+                        }
+                        return false
+                    }
+                }).into(storyImage)
+        } else{
+            storyVideo.setVideoURI(Uri.parse(user.stories[currentStory].url))
+            storyVideo.setOnPreparedListener {
+                if(onHold){
+                    setTimer(it.duration.toLong(),remainingTime)
+                }else{
+                    setTimer(it.duration.toLong(),it.duration.toLong())
+                }
+            }
         }
 
+    }
+
+    private fun resetData() {
+        timer?.cancel()
         storyVideo.stopPlayback()
         progress = 0
         storyVideo.visibility = View.GONE
@@ -127,16 +159,12 @@ class StoryFragment(
 
     private fun initProgressBar(){
 
-        //isSeenList = BooleanArray(user.stories.size)
-
         val params : LinearLayout.LayoutParams = LinearLayout.LayoutParams(
             0,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
         params.weight = 1F
         params.setMargins(3,0,3,0)
-
-
 
         for(i in 0 until user.stories.size){
             val progressBar = ProgressBar(requireContext(),
@@ -156,28 +184,26 @@ class StoryFragment(
 
     private fun setTimer(maxDuration: Long,remaining: Long) {
 
-
         progressBarList[currentStory].progress = progress
 
-        if(this::timer.isInitialized){
-            timer.cancel()
-        }
+        timer?.cancel()
 
-        timer = object: CountDownTimer(remaining, 100) {
+        timer = object: CountDownTimer(remaining, 50) {
             override fun onTick(millisUntilFinished: Long){
-                //Log.i("tag", remainingTime.toString())
-                progressBarList[currentStory].progress = (progress * 100/(maxDuration/100)).toInt()
+                Log.i("tag", progress.toString())
+                progressBarList[currentStory].progress = (progress * 100/(maxDuration/50)).toInt()
                 progress++
+                //progressBarList[currentStory].progress = ((1-(millisUntilFinished.toFloat()/maxDuration)) * 100).toInt()
                 remainingTime = millisUntilFinished
             }
 
             override fun onFinish(){
                 progressBarList[currentStory].progress = 100
-                Log.i("Tag","finish")
+                //Log.i("Tag","finish")
 
                 if(currentStory >= user.stories.size - 1){
                     storyVideo.stopPlayback()
-                    Log.i("tag", "emre")
+                    //Log.i("tag", "emre")
                     itemClick.nextUserStory()
                 }else {
                     storyVideo.stopPlayback()
@@ -188,7 +214,7 @@ class StoryFragment(
 
             }
         }
-        timer.start()
+        (timer as CountDownTimer).start()
     }
 
 
@@ -200,15 +226,20 @@ class StoryFragment(
                 when (view) {
                     next -> {
                         if(currentStory >= user.stories.size - 1){
-                            progressBarList[currentStory].progress = 0
-                            if(this@StoryFragment::timer.isInitialized){
-                                timer.cancel()
+                            nextClicked = System.currentTimeMillis()
+                            if((System.currentTimeMillis()-previousClicked)<=500){
+                                Log.i("clicked", "hızlı tıklama")
+                            }else{
+                                progressBarList[currentStory].progress = 0
+
+                                timer?.cancel()
+
+                                storyVideo.stopPlayback()
+                                //Log.i("tag", "emre tıklama")
+                                itemClick.nextUserStory()
                             }
-                            storyVideo.stopPlayback()
-                            Log.i("tag", "emre tıklama")
-                            itemClick.nextUserStory()
                         }else {
-                            timer.cancel()
+                            timer?.cancel()
                             storyVideo.stopPlayback()
                             progressBarList[currentStory].progress = 100
                             currentStory++
@@ -219,9 +250,14 @@ class StoryFragment(
                     }
                     previous -> {
                         if(currentStory <= 0){
-                            itemClick.previousUserStory()
+                            previousClicked = System.currentTimeMillis()
+                            if((System.currentTimeMillis()-nextClicked) <= 500) {
+                                Log.i("clicked", "hızlı tıklama")
+                            }else{
+                                itemClick.previousUserStory()
+                            }
                         }else {
-                            timer.cancel()
+                            timer?.cancel()
                             progressBarList[currentStory].progress = 0
                             currentStory--
                             loadData()
@@ -241,7 +277,7 @@ class StoryFragment(
 
             override fun onTouchView(view: View, event: MotionEvent): Boolean {
                 super.onTouchView(view, event)
-                Log.i("action", event.action.toString())
+                //Log.i("action", event.action.toString())
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         pressTime = System.currentTimeMillis()
@@ -274,46 +310,23 @@ class StoryFragment(
     }
     private  fun nextStory(){
         progress = 0
-        if(user.stories[currentStory].contentType == 0){
-            duration = 5000L
-            setTimer(duration,duration)
-        } else{
-            storyVideo.setVideoURI(Uri.parse(user.stories[currentStory].url))
-            storyVideo.setOnPreparedListener {
-                setTimer(it.duration.toLong(),it.duration.toLong())
-            }
-            storyVideo.start()
-        }
+        setContent()
     }
     private  fun previousStory(){
         progress = 0
-        if(user.stories[currentStory].contentType == 0){
-            duration = 5000L
-            setTimer(duration,duration)
-        } else{
-            storyVideo.setVideoURI(Uri.parse(user.stories[currentStory].url))
-            storyVideo.setOnPreparedListener {
-                setTimer(it.duration.toLong(),it.duration.toLong())
-            }
-            storyVideo.start()
-        }
+        setContent()
     }
 
     fun pauseCurrentStory() {
         storyVideo.pause()
-        timer.cancel()
+        timer?.cancel()
     }
 
     fun resumeCurrentStory() {
         storyVideo.start()
-        Log.i("progress", progressBarList[currentStory].progress.toString())
-        Log.i("remainingtime", remainingTime.toString())
-        if(user.stories[currentStory].contentType == 0){
-            duration = 5000L
-            setTimer(duration,remainingTime)
-        } else{
-            setTimer(storyVideo.duration.toLong(),remainingTime)
-        }
+        //Log.i("progress", progressBarList[currentStory].progress.toString())
+        //Log.i("remainingtime", remainingTime.toString())
+        setContent()
     }
 
     private fun showStoryInfo() {
@@ -336,22 +349,14 @@ class StoryFragment(
 
 
     private fun loadData() {
-
-
-        //isSeenList[currentStory] = true
-
         progressBarList[currentStory].progress = 0
-
         Glide.with(requireContext()).load(user.profilePicture).into(profilePhoto)
         username.text = user.username
         storyTime.text = user.stories[currentStory].story_time
-
         if(user.stories[currentStory].contentType == 0){
-
             storyVideo.stopPlayback()
             storyVideo.visibility = View.GONE
             storyImage.visibility = View.VISIBLE
-            Glide.with(requireContext()).load(user.stories[currentStory].url).into(storyImage)
         }
         else{
             storyImage.visibility = View.GONE

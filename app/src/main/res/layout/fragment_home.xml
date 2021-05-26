@@ -13,7 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:padding="4dp"
         android:src="@drawable/insta_logo"
@@ -32,7 +31,6 @@
         android:textSize="32sp"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

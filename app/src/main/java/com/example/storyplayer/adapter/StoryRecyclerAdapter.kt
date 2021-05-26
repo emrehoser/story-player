@@ -41,14 +41,12 @@ class StoryRecyclerAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val isSeen: ImageView = itemView.findViewById<ImageView>(R.id.is_seen_circle)
         val profilePhoto: CircleImageView = itemView.findViewById<CircleImageView>(R.id.row_story_profile)
         val username: TextView = itemView.findViewById<TextView>(R.id.username)
 
         fun bindData(position: Int, clickListener: StoryClickListener){
             itemView.setOnClickListener {
                 clickListener.onStoryClicked(position)
-                //isSeen.setImageResource(R.drawable.seen_story_circle)
             }
         }
     }
